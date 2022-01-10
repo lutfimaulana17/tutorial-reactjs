@@ -1,14 +1,29 @@
-import React, { createContext } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
 const UserProvider = ({ children }) => {
-  const user = {
-    name: "Lutfi Maulana",
+  const [user, setUser] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const getUser = () => {
+    setLoading(true);
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((json) => {
+        setUser(json);
+        setLoading(false);
+      });
   };
 
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, loading }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
